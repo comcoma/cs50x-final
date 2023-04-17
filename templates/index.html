@@ -3,15 +3,23 @@
 Discover brilliant ideas
 {% endblock %}
 {% block main %}
-	{% for row in rows %}
-	
-	<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+
+{% if session["user_id"] %}
+<!--if logged in show this-->
+<!--ADDITIONAL NAV FOR USER-->
+
+{% endif %}
+
+	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+		{% for row in rows %}
 		<div class="col">
 			<div class="card shadow-sm">
 				<div class="card-body">
 					<img alt="Idea image" class="img-fluid" src="{{ row['img'] }}">
 					<h3>{{ row['title'] }}</h3>
-					<p class="card-text">{{ row['description'] }}</p>
+					<small class="text-primary">{{ row['datetime'] }}</small>
+					<p class="card-text">{{ row['description'] [:160] }} ...</p>
 					<div class="d-flex justify-content-between align-items-center">
 						<div class="btn-group">
 							<button type="button" class="btn btn-sm btn-outline-secondary">Read More</button>
@@ -21,6 +29,6 @@ Discover brilliant ideas
 				</div>
 			</div>
 		</div>
+		{% endfor %}
 	</div>
-	{% endfor %}
 {% endblock %}

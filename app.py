@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import apology, login_required
+from helpers import apology, login_required, dateformat
 
 # Configure application
 app = Flask(__name__)
@@ -16,6 +16,10 @@ Session(app)
 
 # Connect to DB
 db = SQL("sqlite:///cloud.db")
+
+# Date formatter
+""" Jinja Filter """
+app.jinja_env.filters["dateformat"] = dateformat
 
 
 @app.after_request
@@ -31,7 +35,6 @@ def after_request(response):
 @app.route("/")
 def index():
     """Show all the ideas posted"""
-
     rows = db.execute("SELECT * FROM ideas")
     return render_template("index.html", rows=rows)
 
@@ -39,7 +42,6 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-
     # Forget any user_id
     session.clear()
 
@@ -48,23 +50,35 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return redirect("/login")
+            flash("Please, enter your username", 'warning')
+            #return apology("must provide username", 403)
 
         # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
+        if not request.form.get("password"):
+            return redirect("/login")
+            flash("Please, enter your password", 'warning')
+            #return apology("must provide password", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+            #return apology("invalid username and/or password", 403)
+            return redirect("/login")
+            flash("Invalid username and/or password", 'warning')
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        try:
+            session["user_id"] = rows[0]["id"]
+        except:
+            return redirect("/login")
+            flash("User not found", 'warning')
+            # return redirect("/login")
 
         # Redirect user to home page
+        flash("Logged in!", 'info')
         return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
@@ -78,6 +92,7 @@ def logout():
 
     # Forget any user_id and redirect to home
     session.clear()
+    flash("Logged out!", 'info')
     return redirect("/")
 
 
@@ -121,3 +136,22 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
+
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add():
+    """ Add new idea"""
+    if request.method == "GET":
+        categories = db.execute("SELECT category,id FROM categories")
+        # Load new idea form
+        return render_template("add.html", categories=categories)
+    else:
+        author_id = session["user_id"]
+        title = request.form.get("title")
+        category_id = request.form.get("category_id")
+        img = request.form.get("img")
+        description = request.form.get("description")
+
+        db.execute("INSERT INTO ideas (author_id, category_id, title, description, img) VALUES(?,?,?,?,?)", author_id, category_id, title, description, img)
+
+        return redirect("/")

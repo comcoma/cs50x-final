@@ -35,7 +35,7 @@ def after_request(response):
 @app.route("/")
 def index():
     """Show all the ideas posted"""
-    rows = db.execute("SELECT * FROM ideas")
+    rows = db.execute("SELECT * FROM ideas ORDER BY datetime DESC")
     return render_template("index.html", rows=rows)
 
 

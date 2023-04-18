@@ -40,17 +40,41 @@
 					<a href="/" class="navbar-brand d-flex align-items-center">
 					<strong>IdeaCloud</strong>
 					</a>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-					</button>
+					<div class="d-flex align-items-center">
+						{% if session["user_id"] %}
+						<!--if logged in show this-->
+						<a class="btn text-warning rounded-circle me-2 user-button" href="#" style="background-image: url('static/img/user-in.jpeg');"></a> <!--must show actual user image-->
+						{% else %}
+						<!--if NOT logged in show this-->
+						<a class="btn text-warning rounded-circle me-2 user-button" href="/login" style="background-image: url('static/img/user.png');"></a>
+						{% endif %}
+						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+					</div>
 				</div>
 			</div>
 		</header>
 
+		{% if session["user_id"] %}
+		<div>
+			<ul class="nav justify-content-center">
+				<li class="nav-item">
+				  <a class="nav-link active" aria-current="page" href="/add"><i class="bi bi-plus-square-dotted"></i> New Idea</a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#"><i class="bi bi-suit-heart"></i> Favourites</a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#"><i class="bi bi-person"></i> My Ideas</a>
+				</li>
+			  </ul>
+		</div>
+		{% endif %}
+
 		<div class="container d-flex flex-row-reverse my-3" id="alert-container">
 			{% if get_flashed_messages() %}
 
-			
 				<div class="col-md-4 alert box-shadow alert-primary alert-dismissible fade show" role="alert">
 					{{ get_flashed_messages() | join(" ") }}
 					<button type="button" class="btn-close" id="alert-dismiss" data-bs-dismiss="alert" aria-label="Close"></button>

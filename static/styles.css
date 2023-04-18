@@ -44,3 +44,10 @@
     right: 32px;
     z-index: 100;
   }
+  .user-button{
+    width: 32px;
+    height: 32px;
+    background-size: 32px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }

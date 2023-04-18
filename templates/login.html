@@ -11,13 +11,19 @@
             <h2 class="mb-4">Log In</h2>
             <form action="/login" method="post">
                 <div class="mb-3">
-                    <input autocomplete="off" autofocus class="form-control form-control-lg" id="username" name="username" placeholder="Username" type="text">
+                    <label class="mb-1">Username</label>
+                    <input autocomplete="off" autofocus class="form-control form-control-lg" id="username" name="username" placeholder="Username..." type="text">
                 </div>
                 <div class="mb-3">
-                    <input class="form-control form-control-lg" id="password" name="password" placeholder="Password" type="password">
+                    <label class="mb-1">Password</label>
+                    <input class="form-control form-control-lg" id="password" name="password" placeholder="********" type="password">
                 </div>
                 <div class="mb-3">
                 <button class="btn btn-primary btn-lg col-12" type="submit">Log In</button>
+                </div>
+                
+                <div class="mb-3">
+                    <small>Don't have an account? <a href="/register" title="Sign Up">Sign Up</a></small>
                 </div>
             </form>
     </div>

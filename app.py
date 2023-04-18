@@ -42,40 +42,36 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-    # Forget any user_id
-    session.clear()
+    # Forget any user_id (can't do that if i want to flash a message and reload, because it clears flash message)
+    #session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return redirect("/login")
             flash("Please, enter your username", 'warning')
-            #return apology("must provide username", 403)
+            return redirect("/login")
 
         # Ensure password was submitted
         if not request.form.get("password"):
-            return redirect("/login")
             flash("Please, enter your password", 'warning')
-            #return apology("must provide password", 403)
+            return redirect("/login")
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            #return apology("invalid username and/or password", 403)
+            flash("Invalid username and/or password", 'error')
             return redirect("/login")
-            flash("Invalid username and/or password", 'warning')
 
         # Remember which user has logged in
         try:
             session["user_id"] = rows[0]["id"]
         except:
+            flash("User not found", 'error')
             return redirect("/login")
-            flash("User not found", 'warning')
-            # return redirect("/login")
 
         # Redirect user to home page
         flash("Logged in!", 'info')
@@ -100,21 +96,24 @@ def logout():
 def register():
     """Register user"""
 
-    session.clear()
+    #session.clear() (cant do that if i want to use flash messages)
     # User reached route via POST (submitting the register form)
     if request.method == "POST":
 
         # ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 400)
+            flash("Please, enter a username", 'warning')
+            return redirect("/register")
 
         # ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 400)
+            flash("Please, enter a password", 'warning')
+            return redirect("/register")
 
         # ensure passwords match
         elif request.form.get("password") != request.form.get("confirmation"):
-            return apology("passwords do not match", 400)
+            flash("Passwords do not match", 'warning')
+            return redirect("/register")
 
         # save username and password hash in variables
         username = request.form.get("username")
@@ -124,7 +123,8 @@ def register():
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           username=username)
         if len(rows) != 0:
-            return apology("username is already taken", 400)
+            flash("Username is already taken", 'warning')
+            return redirect("/register")
 
         # insert username and hash into database
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",

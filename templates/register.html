@@ -7,19 +7,25 @@
 {% block main %}
 <div class="row d-flex justify-content-center">
     <div class="col-sm-12 col-md-6 col-lg-4">
-<h2 class="mb-4">Register</h2>
-    <form action="/register" method="post">
+<h2 class="mb-4">Sign Up</h2>
+    <form action="/register" method="post" autocomplete="off">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control form-control-lg" name="username" placeholder="Username" type="text">
+            <label class="mb-1">Username</label>
+            <input autocomplete="off" autofocus class="form-control form-control-lg" name="username" placeholder="Username..." type="text">
         </div>
         <div class="mb-3">
-            <input class="form-control form-control-lg" name="password" placeholder="Password" type="password">
+            <label class="mb-1">Password</label>
+            <input class="form-control form-control-lg" name="password" placeholder="********" type="password">
         </div>
         <div class="mb-3">
-            <input class="form-control form-control-lg" name="confirmation" placeholder="Confirm Password" type="password">
+            <label class="mb-1">Confirm password</label>
+            <input class="form-control form-control-lg" name="confirmation" placeholder="********" type="password">
         </div>
         <div class="mb-3">
-            <button class="btn btn-primary btn-lg col-12" type="submit">Register</button>
+            <button class="btn btn-primary btn-lg col-12" type="submit">Sign Up</button>
+        </div>
+        <div class="mb-3">
+            <small>Already have an account? <a href="/login" title="Log In">Log In</a></small>
         </div>
     </form>
     </div>

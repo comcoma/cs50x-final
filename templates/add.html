@@ -10,10 +10,10 @@
 <h2 class="mb-4">New idea</h2>
     <form action="/add" method="post">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control form-control-lg" name="title" placeholder="Title ..." type="text">
+            <input autocomplete="off" autofocus class="form-control form-control-lg" name="title" placeholder="Title ..." type="text" required>
         </div>
         <div class="mb-3">
-            <select class="form-control form-control-lg" name="category_id" type="text">
+            <select class="form-control form-control-lg" name="category_id" type="text" required>
                 <option value="" disabled selected>-- Category --</option>
                 {% for categ in categories %}
                     <option value="{{categ['id']}}"> {{categ['category']}} </option>
@@ -21,10 +21,10 @@
             </select>
         </div>
         <div class="mb-3">
-            <input class="form-control form-control-lg" name="img" placeholder="Image URL ..." type="text">
+            <input class="form-control form-control-lg" name="img" placeholder="Image URL ..." type="text" required>
         </div>
         <div class="mb-3">
-            <textarea class="form-control form-control-lg" name="description" placeholder="Describe idea ..."></textarea>
+            <textarea class="form-control form-control-lg" name="description" placeholder="Describe idea ..." required></textarea>
         </div>
         <div class="mb-3">
             <button class="btn btn-primary btn-lg col-12" type="submit">Post</button>

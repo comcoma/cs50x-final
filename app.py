@@ -152,6 +152,23 @@ def add():
         img = request.form.get("img")
         description = request.form.get("description")
 
-        db.execute("INSERT INTO ideas (author_id, category_id, title, description, img) VALUES(?,?,?,?,?)", author_id, category_id, title, description, img)
+        # ensure title was provided
+        if not request.form.get("title"):
+            flash("Please, enter a title", 'warning')
+            return redirect("/add")
+        # ensure description was provided
+        elif not request.form.get("description"):
+            flash("Please, enter a description", 'warning')
+            return redirect("/add")
+        # ensure img URL was provided
+        elif not request.form.get("img"):
+            flash("Please, enter a img URL", 'warning')
+            return redirect("/add")
+        # ensure category was selected
+        elif not request.form.get("category_id"):
+            flash("Please, select a category", 'warning')
+            return redirect("/add")
+        else:
+            db.execute("INSERT INTO ideas (author_id, category_id, title, description, img) VALUES(?,?,?,?,?)", author_id, category_id, title, description, img)
 
         return redirect("/")

@@ -23,7 +23,10 @@ Discover brilliant ideas
 						<p class="card-text">{{ row['description'] [:160] }} ...</p> <!--limit characters-->
 						<div class="d-flex justify-content-between align-items-center">
 							<div class="btn-group">
-								<button type="button" class="btn btn-sm btn-outline-secondary">VOTE</button>
+								<form action="vote" method="POST">
+									<input type="text" name="idea_number_field" value="{{ row['idea_id'] }}" style="display:none">
+									<button type="submit" id="idea-{{ row['idea_id'] }}" class="btn btn-sm btn-outline-secondary">VOTE</button>
+								</form>
 							</div>
 							<small class="text-body-secondary">{{ row['votes'] }} Votes</small>
 						</div>

@@ -35,7 +35,7 @@ def after_request(response):
 @app.route("/")
 def index():
     """Show all the ideas posted"""
-    rows = db.execute("SELECT * FROM ideas ORDER BY datetime DESC")
+    rows = db.execute("SELECT * FROM ideas ORDER BY votes DESC")
     return render_template("index.html", rows=rows)
 
 
@@ -170,5 +170,19 @@ def add():
             return redirect("/add")
         else:
             db.execute("INSERT INTO ideas (author_id, category_id, title, description, img) VALUES(?,?,?,?,?)", author_id, category_id, title, description, img)
+
+        return redirect("/")
+
+@app.route("/vote", methods=["GET", "POST"])
+@login_required
+def vote():
+    """ Add new idea"""
+    if request.method == "GET":
+        # Load new idea form
+        return redirect("/")
+    else:
+        idea_id = request.form.get("idea_number_field")
+        # ensure title was provided
+        db.execute("UPDATE ideas SET votes = votes + 1 WHERE idea_id = ?", idea_id)
 
         return redirect("/")

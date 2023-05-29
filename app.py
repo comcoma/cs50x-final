@@ -182,8 +182,11 @@ def vote():
         return redirect("/")
     else:
         idea_id = request.form.get("idea_number_field")
+        user_id = session["user_id"]
         # ensure title was provided
         db.execute("UPDATE ideas SET votes = votes + 1 WHERE idea_id = ?", idea_id)
+
+        db.execute("INSERT INTO favs('idea_id', 'user_id') VALUES (?,?)", idea_id, user_id)
         
         flash("Thanks for voting", 'warning')
         return redirect("/")
@@ -194,4 +197,12 @@ def my_ideas():
     """Show all the ideas posted by me"""
     author_id = session["user_id"]
     rows = db.execute("SELECT * FROM ideas WHERE author_id = ? ORDER BY votes DESC", author_id)
+    return render_template("index.html", rows=rows)
+
+@app.route("/favorites")
+@login_required
+def favorites():
+    """Show favorites I voted for"""
+    user_id = session["user_id"]
+    rows = db.execute("SELECT * FROM ideas JOIN favs ON favs.idea_id = ideas.idea_id WHERE user_id = ? ORDER BY votes", user_id)
     return render_template("index.html", rows=rows)

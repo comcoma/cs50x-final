@@ -36,7 +36,10 @@ def after_request(response):
 def index():
     """Show all the ideas posted"""
     rows = db.execute("SELECT * FROM ideas ORDER BY votes DESC")
-    return render_template("index.html", rows=rows)
+    users = ''
+    if session.get("user_id") is not None:
+        users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+    return render_template("index.html", rows=rows, users=users)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -131,7 +134,8 @@ def register():
                    username=username, hash=hash)
 
         # redirect to login page
-        return redirect("/")
+        flash("Successfully registered", 'warning')
+        return redirect("/login")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -144,7 +148,10 @@ def add():
     if request.method == "GET":
         categories = db.execute("SELECT category,id FROM categories")
         # Load new idea form
-        return render_template("add.html", categories=categories)
+        users = ''
+        if session.get("user_id") is not None:
+            users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+        return render_template("add.html", categories=categories, users=users)
     else:
         author_id = session["user_id"]
         title = request.form.get("title")
@@ -208,7 +215,11 @@ def my_ideas():
     """Show all the ideas posted by me"""
     author_id = session["user_id"]
     rows = db.execute("SELECT * FROM ideas WHERE author_id = ? ORDER BY votes DESC", author_id)
-    return render_template("index.html", rows=rows)
+    
+    users = ''
+    if session.get("user_id") is not None:
+        users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+    return render_template("index.html", rows=rows, users=users)
 
 @app.route("/favorites")
 @login_required
@@ -216,4 +227,8 @@ def favorites():
     """Show favorites I voted for"""
     user_id = session["user_id"]
     rows = db.execute("SELECT * FROM ideas JOIN favs ON favs.idea_id = ideas.idea_id WHERE user_id = ? ORDER BY votes", user_id)
-    return render_template("index.html", rows=rows)
+    
+    users = ''
+    if session.get("user_id") is not None:
+        users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
+    return render_template("index.html", rows=rows, users=users)

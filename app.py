@@ -164,7 +164,10 @@ def add():
         elif not request.form.get("img"):
             flash("Please, enter a img URL", 'warning')
             return redirect("/add")
-        # no longer asking for category ///
+        # ensure category is selected
+        elif not request.form.get("category_id"):
+            flash("Please, select a category", 'warning')
+            return redirect("/add")
         else:
             db.execute("INSERT INTO ideas (author_id, title, description, img) VALUES(?,?,?,?)", author_id, title, description, img)
 
@@ -184,3 +187,11 @@ def vote():
         
         flash("Thanks for voting", 'warning')
         return redirect("/")
+
+@app.route("/my_ideas")
+@login_required
+def my_ideas():
+    """Show all the ideas posted by me"""
+    author_id = session["user_id"]
+    rows = db.execute("SELECT * FROM ideas WHERE author_id = ? ORDER BY votes DESC", author_id)
+    return render_template("index.html", rows=rows)

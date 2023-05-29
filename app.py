@@ -176,14 +176,25 @@ def add():
 @app.route("/vote", methods=["GET", "POST"])
 @login_required
 def vote():
-    """ Add new idea"""
+    """ Add an idea to favourites / vote """
     if request.method == "GET":
         # Load new idea form
         return redirect("/")
     else:
         idea_id = request.form.get("idea_number_field")
         user_id = session["user_id"]
-        # ensure title was provided
+        
+        # check if already voted for that idea
+        rows = db.execute("SELECT * FROM favs WHERE idea_id = ? AND user_id = ?", idea_id, user_id)
+        if len(rows) == 1:
+            # remove vote in this case
+            db.execute("DELETE FROM favs WHERE idea_id = ? AND user_id = ?", idea_id, user_id)
+            # decrease votes by 1
+            db.execute("UPDATE ideas SET votes = votes - 1 WHERE idea_id = ?", idea_id)
+            flash("Removed from favourites", 'warning')
+            return redirect("/")
+
+        # ensure increase vote count by 1
         db.execute("UPDATE ideas SET votes = votes + 1 WHERE idea_id = ?", idea_id)
 
         db.execute("INSERT INTO favs('idea_id', 'user_id') VALUES (?,?)", idea_id, user_id)

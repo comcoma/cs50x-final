@@ -164,12 +164,9 @@ def add():
         elif not request.form.get("img"):
             flash("Please, enter a img URL", 'warning')
             return redirect("/add")
-        # ensure category was selected
-        elif not request.form.get("category_id"):
-            flash("Please, select a category", 'warning')
-            return redirect("/add")
+        # no longer asking for category ///
         else:
-            db.execute("INSERT INTO ideas (author_id, category_id, title, description, img) VALUES(?,?,?,?,?)", author_id, category_id, title, description, img)
+            db.execute("INSERT INTO ideas (author_id, title, description, img) VALUES(?,?,?,?)", author_id, title, description, img)
 
         return redirect("/")
 
@@ -184,5 +181,6 @@ def vote():
         idea_id = request.form.get("idea_number_field")
         # ensure title was provided
         db.execute("UPDATE ideas SET votes = votes + 1 WHERE idea_id = ?", idea_id)
-
+        
+        flash("Thanks for voting", 'warning')
         return redirect("/")

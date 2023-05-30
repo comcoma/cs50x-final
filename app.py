@@ -217,9 +217,10 @@ def my_ideas():
     rows = db.execute("SELECT * FROM ideas WHERE author_id = ? ORDER BY votes DESC", author_id)
     
     users = ''
+    editing = True
     if session.get("user_id") is not None:
         users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
-    return render_template("index.html", rows=rows, users=users)
+    return render_template("index.html", rows=rows, users=users, editing=editing)
 
 @app.route("/favorites")
 @login_required
@@ -232,3 +233,24 @@ def favorites():
     if session.get("user_id") is not None:
         users = db.execute("SELECT * FROM users WHERE id = ?", session["user_id"])
     return render_template("index.html", rows=rows, users=users)
+
+@app.route("/delete", methods=["GET", "POST"])
+@login_required
+def delete():
+    """Delete my idea"""
+    if request.method == "GET":
+        # Load new idea form
+        return redirect("/")
+    else:
+        idea_id = request.form.get("idea_number_field")
+        user_id = session["user_id"]
+        author_id = db.execute("SELECT author_id FROM ideas WHERE idea_id = ? ", idea_id)
+        author_num = author_id[0]['author_id']
+
+        if int(author_num) == int(user_id):
+            db.execute("DELETE FROM ideas WHERE idea_id = ?", idea_id)
+            flash("Your idea was deleted", 'warning')
+            return redirect("/")
+        else:
+            flash("You tried to delete someone else's idea", 'warning')
+            return redirect("/")

@@ -68,3 +68,12 @@
     font-weight: bold;
     color: #555;
   }
+  #vote_form{
+    display: inline-block;
+  }
+  #card_actions{
+    z-index: 100;
+  }
+  #card_actions form{
+    display: block;
+  }
